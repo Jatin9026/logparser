@@ -583,7 +583,7 @@ st.markdown("""
         --line-soft: #ebeef3;
         --surface: #ffffff;
         --surface-2: #f8fafc;
-        --canvas: #f2f4f7;
+        --canvas: #f1f3f7;
 
         --success: #15803d;
         --success-soft: #ecfdf3;
@@ -600,22 +600,16 @@ st.markdown("""
         --radius-lg: 16px;
         --radius-xl: 20px;
 
-        --shadow-sm: 0 1px 2px rgba(15, 23, 42, .05);
-        --shadow-md: 0 8px 22px rgba(15, 23, 42, .07);
-        --shadow-lg: 0 18px 44px rgba(15, 23, 42, .10);
+        --shadow-sm: 0 1px 3px rgba(15, 23, 42, .06);
+        --shadow-md: 0 10px 24px rgba(15, 23, 42, .08);
+        --shadow-lg: 0 20px 48px rgba(15, 23, 42, .12);
 
         --space-1: 6px;
         --space-2: 10px;
         --space-3: 16px;
-        --space-4: 22px;
-        --space-5: 28px;
+        --space-4: 24px;
+        --space-5: 30px;
     }
-
-    /* ===============================================================
-       BASE — force every native Streamlit element in the main canvas
-       to use the design-system ink color. This is the fix for text
-       silently inheriting a color that matches its background.
-       =============================================================== */
 
     html, body, [class*="css"], .stApp, .stApp * {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
@@ -623,41 +617,47 @@ st.markdown("""
 
     .stApp {
         background: var(--canvas);
-        color: var(--ink-800);
-        font-size: 15.5px;
+        font-size: 16px;
     }
 
     #MainMenu, footer { visibility: hidden; }
 
     [data-testid="stHeader"] {
-        background: rgba(242,244,247,0.92);
+        background: rgba(241,243,247,0.92);
     }
 
     .block-container {
-        padding-top: 1.6rem;
-        max-width: 1240px;
+        padding-top: 1.7rem;
+        max-width: 1260px;
     }
 
-    /* Default text color for every markdown / label / widget rendered
-       in the MAIN area (not the sidebar, which gets its own rules below). */
-    section.main p,
-    section.main li,
-    section.main span,
-    section.main label,
-    section.main div[data-testid="stMarkdownContainer"],
-    section.main div[data-testid="stMarkdownContainer"] p,
-    section.main .stMarkdown,
-    section.main .stCaption,
-    section.main small,
-    section.main h1, section.main h2, section.main h3,
-    section.main h4, section.main h5, section.main h6 {
-        color: var(--ink-800);
+    /* ===============================================================
+       TEXT-COLOR SAFETY NET
+       Streamlit injects its own CSS-in-JS classes on native text
+       elements (p, span, label, div, headings) which can carry higher
+       or equal specificity than plain classes and can end up matching
+       a theme color close to the background — the "hidden text" bug.
+       :where() gives this rule ZERO specificity so it always loses to
+       any real component class below (.metric-value, .status-pill,
+       button text, etc.) while !important still lets it beat
+       Streamlit's own un-important theme rules. This is the fix.
+       =============================================================== */
+
+    :where(.stApp) :where(p, span, label, li, small, div, h1, h2, h3, h4, h5, h6, a) {
+        color: var(--ink-800) !important;
     }
 
-    section.main h1, section.main h2, section.main h3,
-    section.main h4, section.main h5, section.main h6 {
+    :where(.stApp) :where(h1, h2, h3, h4, h5, h6) {
         color: var(--ink-900) !important;
-        font-weight: 800;
+        font-weight: 800 !important;
+    }
+
+    :where([data-testid="stSidebar"]) :where(p, span, label, li, small, div, h1, h2, h3, h4, h5, h6, a) {
+        color: #eef1f6 !important;
+    }
+
+    :where([data-testid="stSidebar"]) :where(.stCaption, small) {
+        color: #9aa5ba !important;
     }
 
     section.main .stCaption, section.main small {
@@ -688,14 +688,14 @@ st.markdown("""
 
     section.main .stCodeBlock code, section.main pre code {
         color: #e7ecf5 !important;
-        font-size: 13px !important;
+        font-size: 13.5px !important;
     }
 
     /* Radio / checkbox option text in the main canvas */
     section.main .stRadio label p,
     section.main .stCheckbox label p {
         color: var(--ink-800) !important;
-        font-size: 14.5px;
+        font-size: 15px !important;
     }
 
     /* Expander header text */
@@ -703,7 +703,7 @@ st.markdown("""
     section.main .streamlit-expanderHeader p {
         color: var(--ink-900) !important;
         font-weight: 700 !important;
-        font-size: 13.5px !important;
+        font-size: 14px !important;
     }
 
     section.main details summary {
@@ -720,28 +720,17 @@ st.markdown("""
         color: var(--ink-700) !important;
     }
 
-    /* Alerts (success / warning / error boxes) — ensure readable contrast */
+    /* Alerts (success / warning / error boxes) */
     section.main div[data-testid="stAlert"] p {
-        font-size: 14px !important;
+        font-size: 14.5px !important;
         font-weight: 550;
     }
 
     /* ================= Sidebar ================= */
 
     [data-testid="stSidebar"] {
-        background: var(--ink-900);
+        background: linear-gradient(180deg, var(--ink-900) 0%, #0e1626 100%);
         border-right: 1px solid #1e2a3f;
-    }
-
-    [data-testid="stSidebar"] * {
-        color: #eef1f6 !important;
-    }
-
-    [data-testid="stSidebar"] .stCaption,
-    [data-testid="stSidebar"] small,
-    [data-testid="stSidebar"] p {
-        color: #9aa5ba !important;
-        font-size: 12.5px;
     }
 
     [data-testid="stSidebar"] hr {
@@ -751,12 +740,12 @@ st.markdown("""
 
     [data-testid="stSidebar"] [data-testid="stMetricValue"] {
         color: #ffffff !important;
-        font-size: 21px;
+        font-size: 22px !important;
     }
 
     [data-testid="stSidebar"] [data-testid="stMetricLabel"] {
         color: #9aa5ba !important;
-        font-size: 11.5px;
+        font-size: 12px !important;
         text-transform: uppercase;
         letter-spacing: .5px;
     }
@@ -766,35 +755,41 @@ st.markdown("""
     }
 
     [data-testid="stSidebar"] .stRadio [role="radiogroup"] {
-        gap: 2px;
+        gap: 3px;
     }
 
     [data-testid="stSidebar"] .stRadio [role="radiogroup"] label {
         background: transparent;
         border-radius: var(--radius-sm);
-        padding: 7px 8px;
+        padding: 8px 9px;
         transition: background .15s ease;
         width: 100%;
+        border: 1px solid transparent;
     }
 
     [data-testid="stSidebar"] .stRadio [role="radiogroup"] label p {
-        font-size: 14px !important;
+        font-size: 14.5px !important;
         font-weight: 550;
     }
 
     [data-testid="stSidebar"] .stRadio [role="radiogroup"] label:hover {
         background: rgba(255,255,255,.07);
+        border-color: rgba(255,255,255,.08);
     }
 
     [data-testid="stSidebar"] div[data-testid="stButton"] > button {
         background: rgba(255,255,255,.06);
-        border: 1px solid rgba(255,255,255,.14);
+        border: 1px solid rgba(255,255,255,.16);
+    }
+
+    [data-testid="stSidebar"] div[data-testid="stButton"] > button p {
         color: #f4f6fa !important;
+        font-weight: 650;
     }
 
     [data-testid="stSidebar"] div[data-testid="stButton"] > button:hover {
-        background: rgba(255,255,255,.12);
-        border-color: rgba(255,255,255,.24);
+        background: rgba(255,255,255,.13);
+        border-color: rgba(255,255,255,.28);
     }
 
     .brand {
@@ -805,37 +800,37 @@ st.markdown("""
     }
 
     .brand-icon {
-        width: 42px;
-        height: 42px;
+        width: 44px;
+        height: 44px;
         border-radius: var(--radius-md);
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--accent);
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
         color: white !important;
-        font-size: 20px;
+        font-size: 21px;
         font-weight: 800;
-        box-shadow: 0 8px 20px rgba(249,115,22,.35);
+        box-shadow: 0 10px 22px rgba(249,115,22,.4);
         flex-shrink: 0;
     }
 
     .brand-title {
-        font-size: 19px;
+        font-size: 20px;
         line-height: 1.15;
-        font-weight: 800;
+        font-weight: 800 !important;
         letter-spacing: -.3px;
         color: #ffffff !important;
     }
 
     .brand-sub {
-        font-size: 11.5px;
+        font-size: 12px;
         color: #9aa5ba !important;
         margin-top: 3px;
     }
 
     .nav-label {
-        font-size: 11.5px;
-        font-weight: 800;
+        font-size: 12px;
+        font-weight: 800 !important;
         letter-spacing: .6px;
         text-transform: uppercase;
         color: #9aa5ba !important;
@@ -846,7 +841,7 @@ st.markdown("""
         display: flex;
         align-items: center;
         gap: 6px;
-        font-size: 11.5px;
+        font-size: 12px;
         color: #9aa5ba !important;
         flex-wrap: wrap;
         line-height: 1.8;
@@ -855,37 +850,50 @@ st.markdown("""
     /* ================= Hero ================= */
 
     .hero {
+        position: relative;
         background: linear-gradient(135deg, var(--ink-900) 0%, #182236 100%);
         border: 1px solid #1e2a3f;
         border-radius: var(--radius-xl);
-        padding: var(--space-5) 32px;
+        padding: var(--space-5) 34px;
         margin-bottom: var(--space-4);
         box-shadow: var(--shadow-lg);
+        overflow: hidden;
+    }
+
+    .hero::after {
+        content: "";
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(249,115,22,.22) 0%, rgba(249,115,22,0) 70%);
+        pointer-events: none;
     }
 
     .hero-kicker {
         color: #fb923c !important;
-        font-size: 12px;
-        font-weight: 800;
-        letter-spacing: 1.4px;
+        font-size: 12.5px;
+        font-weight: 800 !important;
+        letter-spacing: 1.5px;
         text-transform: uppercase;
         margin-bottom: var(--space-1);
     }
 
     .hero h1 {
         color: #ffffff !important;
-        font-size: 30px;
+        font-size: 33px;
         margin: 0;
-        letter-spacing: -.6px;
-        font-weight: 800;
+        letter-spacing: -.7px;
+        font-weight: 800 !important;
     }
 
     .hero p {
-        color: #b7c1d4 !important;
-        margin: 9px 0 0;
-        font-size: 14.5px;
-        max-width: 660px;
-        line-height: 1.6;
+        color: #becbe0 !important;
+        margin: 10px 0 0;
+        font-size: 15px;
+        max-width: 680px;
+        line-height: 1.65;
     }
 
     .flow {
@@ -893,28 +901,34 @@ st.markdown("""
         grid-template-columns: repeat(4, 1fr);
         gap: var(--space-2);
         margin-top: var(--space-4);
+        position: relative;
     }
 
     .flow-item {
         background: rgba(255,255,255,.06);
         border: 1px solid rgba(255,255,255,.10);
         border-radius: var(--radius-md);
-        padding: 13px 14px;
-        transition: background .15s ease;
+        padding: 14px 15px;
+        transition: background .15s ease, transform .15s ease;
+    }
+
+    .flow-item:hover {
+        background: rgba(255,255,255,.09);
+        transform: translateY(-2px);
     }
 
     .flow-num {
         color: #fb923c !important;
         font-size: 11px;
-        font-weight: 800;
-        letter-spacing: .4px;
+        font-weight: 800 !important;
+        letter-spacing: .5px;
     }
 
     .flow-label {
         color: #f4f6fa !important;
-        font-size: 13.5px;
-        margin-top: 4px;
-        font-weight: 650;
+        font-size: 14px;
+        margin-top: 5px;
+        font-weight: 650 !important;
     }
 
     /* ================= Section headers ================= */
@@ -923,30 +937,30 @@ st.markdown("""
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        font-size: 11.5px;
-        font-weight: 800;
+        font-size: 12px;
+        font-weight: 800 !important;
         letter-spacing: .6px;
         text-transform: uppercase;
         color: var(--accent-dark) !important;
         background: var(--accent-soft);
-        padding: 4px 11px;
+        padding: 5px 12px;
         border-radius: 999px;
         margin-bottom: var(--space-2);
     }
 
     .section-title {
-        font-size: 23px;
-        font-weight: 800;
+        font-size: 25px;
+        font-weight: 800 !important;
         color: var(--ink-900) !important;
-        letter-spacing: -.4px;
-        margin: 0 0 5px;
+        letter-spacing: -.5px;
+        margin: 0 0 6px;
     }
 
     .section-sub {
         color: var(--ink-500) !important;
-        font-size: 14.5px;
+        font-size: 15px;
         margin-bottom: var(--space-4);
-        line-height: 1.55;
+        line-height: 1.6;
     }
 
     /* ================= Cards (single system, reused everywhere) ================= */
@@ -959,24 +973,25 @@ st.markdown("""
     }
 
     .metric-card {
-        padding: 18px var(--space-3);
-        min-height: 96px;
+        padding: 19px var(--space-3);
+        min-height: 100px;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        gap: 7px;
-        transition: box-shadow .15s ease, transform .15s ease;
+        gap: 8px;
+        transition: box-shadow .15s ease, transform .15s ease, border-color .15s ease;
     }
 
     .metric-card:hover {
         box-shadow: var(--shadow-md);
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        border-color: #d7dce4;
     }
 
     .metric-label {
         color: var(--ink-500) !important;
-        font-size: 12px;
-        font-weight: 700;
+        font-size: 12.5px !important;
+        font-weight: 700 !important;
         text-transform: uppercase;
         letter-spacing: .5px;
         display: flex;
@@ -986,16 +1001,16 @@ st.markdown("""
 
     .metric-value {
         color: var(--ink-900) !important;
-        font-size: 27px;
-        font-weight: 800;
-        letter-spacing: -.4px;
+        font-size: 29px !important;
+        font-weight: 800 !important;
+        letter-spacing: -.5px;
         line-height: 1;
     }
 
     .metric-value .unit {
-        font-size: 13.5px;
+        font-size: 14px !important;
         color: var(--ink-500) !important;
-        font-weight: 600;
+        font-weight: 600 !important;
         margin-left: 4px;
     }
 
@@ -1005,27 +1020,34 @@ st.markdown("""
     .metric-value.accent-brand   { color: var(--accent-dark) !important; }
 
     .panel {
-        padding: 18px var(--space-3);
+        padding: 19px var(--space-3);
         height: 100%;
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 5px;
+        transition: box-shadow .15s ease, transform .15s ease, border-color .15s ease;
+    }
+
+    .panel:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+        border-color: #d7dce4;
     }
 
     .panel-icon {
-        font-size: 21px;
+        font-size: 22px;
         margin-bottom: 3px;
     }
 
     .panel b {
         color: var(--ink-900) !important;
-        font-size: 14.5px;
+        font-size: 15px !important;
     }
 
     .panel small {
         color: var(--ink-500) !important;
-        font-size: 12.5px;
-        line-height: 1.55;
+        font-size: 13px !important;
+        line-height: 1.6;
     }
 
     /* ================= Status pills ================= */
@@ -1034,10 +1056,10 @@ st.markdown("""
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        padding: 4px 11px;
+        padding: 5px 12px;
         border-radius: 999px;
-        font-size: 11.5px;
-        font-weight: 800;
+        font-size: 12px !important;
+        font-weight: 800 !important;
         letter-spacing: .2px;
         border: 1px solid transparent;
     }
@@ -1054,33 +1076,34 @@ st.markdown("""
         background: var(--surface);
         border: 1.5px dashed var(--line);
         border-radius: var(--radius-lg);
-        padding: 48px 26px;
+        padding: 50px 28px;
         margin: var(--space-2) 0 var(--space-4);
     }
 
     .empty-icon {
-        font-size: 34px;
+        font-size: 36px;
         margin-bottom: var(--space-2);
         opacity: .85;
     }
 
     .empty-title {
-        font-size: 17.5px;
-        font-weight: 800;
+        font-size: 18.5px !important;
+        font-weight: 800 !important;
         color: var(--ink-900) !important;
     }
 
     .empty-text {
         color: var(--ink-500) !important;
-        font-size: 13.5px;
-        margin-top: 5px;
+        font-size: 14px !important;
+        margin-top: 6px;
     }
 
     /* ================= Step cards (pipeline view) ================= */
 
     .step-card {
-        padding: 17px var(--space-4);
+        padding: 18px var(--space-4);
         margin-bottom: var(--space-2);
+        transition: box-shadow .15s ease, border-color .15s ease;
     }
 
     .step-card:hover {
@@ -1095,30 +1118,30 @@ st.markdown("""
     }
 
     .step-number {
-        min-width: 36px;
-        height: 36px;
+        min-width: 38px;
+        height: 38px;
         border-radius: var(--radius-sm);
         background: var(--accent-soft);
         color: var(--accent-dark) !important;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 12.5px;
-        font-weight: 900;
+        font-size: 13px !important;
+        font-weight: 900 !important;
         flex-shrink: 0;
     }
 
     .step-title {
         color: var(--ink-900) !important;
-        font-weight: 800;
-        font-size: 14.5px;
+        font-weight: 800 !important;
+        font-size: 15px !important;
     }
 
     .step-desc {
         color: var(--ink-500) !important;
-        font-size: 13px;
-        margin-top: 3px;
-        line-height: 1.6;
+        font-size: 13.5px !important;
+        margin-top: 4px;
+        line-height: 1.65;
     }
 
     /* ================= Inputs & controls (unified) ================= */
@@ -1129,7 +1152,7 @@ st.markdown("""
         border-radius: var(--radius-sm) !important;
         border: 1px solid #cdd3dd !important;
         background: var(--surface) !important;
-        font-size: 14.5px !important;
+        font-size: 15px !important;
     }
 
     section.main .stTextInput input:focus,
@@ -1141,56 +1164,59 @@ st.markdown("""
     div[data-testid="stButton"] > button {
         border-radius: var(--radius-sm);
         font-weight: 700;
-        font-size: 14px;
-        min-height: 44px;
+        font-size: 14.5px !important;
+        min-height: 46px;
         border: 1px solid var(--line);
         transition: all .15s ease;
-        color: var(--ink-800);
     }
 
     div[data-testid="stButton"] > button[kind="primary"] {
-        background: var(--accent) !important;
-        border-color: var(--accent) !important;
-        color: #ffffff !important;
-        box-shadow: 0 8px 20px var(--accent-ring);
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%) !important;
+        border-color: var(--accent-dark) !important;
+        box-shadow: 0 10px 22px var(--accent-ring);
     }
 
     div[data-testid="stButton"] > button[kind="primary"] p {
         color: #ffffff !important;
-        font-weight: 750;
+        font-weight: 750 !important;
     }
 
     div[data-testid="stButton"] > button[kind="primary"]:hover {
-        background: var(--accent-dark) !important;
-        border-color: var(--accent-dark) !important;
+        box-shadow: 0 12px 26px rgba(249,115,22,.32);
+        transform: translateY(-1px);
     }
 
     div[data-testid="stButton"] > button[kind="secondary"] {
         background: var(--surface);
-        color: var(--ink-800) !important;
     }
 
     div[data-testid="stButton"] > button[kind="secondary"] p {
         color: var(--ink-800) !important;
+        font-weight: 650 !important;
+    }
+
+    div[data-testid="stButton"] > button[kind="secondary"]:hover {
+        border-color: var(--accent);
     }
 
     div[data-testid="stDownloadButton"] > button {
         border-radius: var(--radius-sm);
-        min-height: 42px;
+        min-height: 44px;
         font-weight: 700;
-        font-size: 13.5px;
+        font-size: 14px !important;
         border: 1px solid var(--line);
-        color: var(--ink-800) !important;
         background: var(--surface);
+        transition: all .15s ease;
     }
 
     div[data-testid="stDownloadButton"] > button p {
         color: var(--ink-800) !important;
+        font-weight: 650 !important;
     }
 
     div[data-testid="stDownloadButton"] > button:hover {
         border-color: var(--accent);
-        color: var(--accent-dark) !important;
+        transform: translateY(-1px);
     }
 
     div[data-testid="stDownloadButton"] > button:hover p {
@@ -1206,13 +1232,13 @@ st.markdown("""
         border-radius: var(--radius-md);
         overflow: hidden;
         box-shadow: var(--shadow-sm);
-        font-size: 13.5px !important;
+        font-size: 14px !important;
     }
 
     .streamlit-expanderHeader {
         border-radius: var(--radius-sm) !important;
         font-weight: 700 !important;
-        font-size: 13.5px !important;
+        font-size: 14px !important;
     }
 
     /* ================= Footer ================= */
@@ -1220,8 +1246,8 @@ st.markdown("""
     .footer {
         color: var(--ink-400) !important;
         text-align: center;
-        font-size: 12px;
-        padding: 22px 0 6px;
+        font-size: 12.5px !important;
+        padding: 24px 0 8px;
         border-top: 1px solid var(--line-soft);
         margin-top: var(--space-5);
     }
@@ -1230,7 +1256,7 @@ st.markdown("""
 
     @media (max-width: 900px) {
         .flow { grid-template-columns: repeat(2, 1fr); }
-        .hero h1 { font-size: 24px; }
+        .hero h1 { font-size: 25px; }
     }
 </style>
 """, unsafe_allow_html=True)
